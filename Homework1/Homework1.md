@@ -20,7 +20,7 @@ Run docker with the `python:3.12.8` image in an interactive mode, use the entryp
 
 What's the version of `pip` in the image?
 
-- 24.3.1
+- `24.3.1`
 - 24.2.1
 - 23.3.1
 - 23.2.1
@@ -77,10 +77,10 @@ volumes:
 - localhost:5432
 - db:5433
 - postgres:5432
-- db:5432
+- `db:5432`
 
 ### Ans
-The hostname is `db` and port is 5432.
+The hostname is `db` and port is `5432`.
 
 ##  Prepare Postgres
 
@@ -157,7 +157,7 @@ where lpep_dropoff_datetime >= '2019-10-01' and
 Answers:
 
 - 104,802;  197,670;  110,612;  27,831;  35,281
-- **104,802;  198,924;  109,603;  27,678;  35,189**
+- `104,802;  198,924;  109,603;  27,678;  35,189`
 - 104,793;  201,407;  110,612;  27,831;  35,281
 - 104,793;  202,661;  109,603;  27,678;  35,189
 - 104,838;  199,013;  109,645;  27,688;  35,202
@@ -173,7 +173,7 @@ Tip: For every day, we only care about one single trip with the longest distance
 - 2019-10-11
 - 2019-10-24
 - 2019-10-26
-- **2019-10-31**
+- `2019-10-31`
 
 ### Ans
 ```
@@ -191,7 +191,7 @@ Which were the top pickup locations with over 13,000 in
 
 Consider only `lpep_pickup_datetime` when filtering by date.
  
-- **East Harlem North, East Harlem South, Morningside Heights**
+- `East Harlem North, East Harlem South, Morningside Heights`
 - East Harlem North, Morningside Heights
 - Morningside Heights, Astoria Park, East Harlem South
 - Bedford, East Harlem North, Astoria Park
@@ -224,10 +224,24 @@ Note: it's `tip` , not `trip`
 We need the name of the zone, not the ID.
 
 - Yorkville West
-- JFK Airport
+- `JFK Airport`
 - East Harlem North
 - East Harlem South
 
+### Ans
+```
+-- This returned JFK Airport
+
+select zdo."Zone" as do_zone
+from green_taxi_trips t
+left join zones zpu on zpu."LocationID" = t."PULocationID"
+left join zones zdo on zdo."LocationID" = t."DOLocationID"
+where date(t.lpep_pickup_datetime) >= '2019-10-01' and 
+	  date(t.lpep_pickup_datetime) <= '2019-10-31' and
+	  zpu."Zone" = 'East Harlem North'
+order by t.tip_amount desc
+limit 1;
+```
 
 ## Terraform
 
@@ -251,9 +265,11 @@ Answers:
 - terraform import, terraform apply -y, terraform destroy
 - teraform init, terraform plan -auto-apply, terraform rm
 - terraform init, terraform run -auto-aprove, terraform destroy
-- terraform init, terraform apply -auto-aprove, terraform destroy
+- `terraform init, terraform apply -auto-aprove, terraform destroy`
 - terraform import, terraform apply -y, terraform rm
 
+### Ans
+Answer highlighted.
 
 ## Submitting the solutions
 

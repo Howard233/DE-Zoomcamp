@@ -1,0 +1,25 @@
+id: taxi_scheduled_HW2
+namespace: zoomcamp
+description: |
+  Best to add a label `backfill:true` from the UI to track executions created via a backfill.
+  CSV data used here comes from: https://github.com/DataTalksClub/nyc-tlc-data/releases
+
+
+tasks:
+  - id: for_each_month
+    type: io.kestra.plugin.core.flow.ForEach
+    values: ["01", "02", "03", "04", "05", "06", "07"]
+    tasks:
+      - id: for_each_taxi_type
+        type: io.kestra.plugin.core.flow.ForEach 
+        values:  [yellow, green]
+        tasks: 
+        - id: sub_flow_ingestion
+          type: io.kestra.plugin.core.flow.Subflow
+          flowId: 06_gcp_taxi
+          namespace: zoomcamp
+          inputs:
+            year: "2021"
+            month: "{{ parent.taskrun.value }}"
+            taxi: "{{ taskrun.value }}"
+

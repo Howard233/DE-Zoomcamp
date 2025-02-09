@@ -213,3 +213,5 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+yellow_tripdata_2024*

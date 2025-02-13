@@ -215,3 +215,5 @@ override.tf.json
 terraform.rc
 
 yellow_tripdata_2024*
+
+*duckdb

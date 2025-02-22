@@ -46,10 +46,21 @@ from {{ source('raw_nyc_tripdata', 'ext_green_taxi' ) }}
 
 - `select * from dtc_zoomcamp_2025.raw_nyc_tripdata.ext_green_taxi`
 - `select * from dtc_zoomcamp_2025.my_nyc_tripdata.ext_green_taxi`
-- `select * from myproject.raw_nyc_tripdata.ext_green_taxi`
+- **`select * from myproject.raw_nyc_tripdata.ext_green_taxi`**
 - `select * from myproject.my_nyc_tripdata.ext_green_taxi`
 - `select * from dtc_zoomcamp_2025.raw_nyc_tripdata.green_taxi`
 
+### Ans
+Since we exported **DBT_BIGQUERY_PROJECT=myproject**,the database wll be **myproject**.
+
+**DBT_BIGQUERY_SOURCE_DATASET** is not overriden, so it will be the default value: **raw_nyc_tripdata**.
+
+The table we are selecting from is **ext_green_taxi**. 
+
+Therefore, this model will be compiled to 
+```
+select * from myproject.raw_nyc_tripdata.ext_green_taxi
+```
 
 ### Question 2: dbt Variables & Dynamic Models
 
@@ -69,9 +80,17 @@ What would you change to accomplish that in a such way that command line argumen
 - Add `ORDER BY pickup_datetime DESC` and `LIMIT {{ var("days_back", 30) }}`
 - Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ var("days_back", 30) }}' DAY`
 - Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ env_var("DAYS_BACK", "30") }}' DAY`
-- Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ var("days_back", env_var("DAYS_BACK", "30")) }}' DAY`
+- **Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ var("days_back", env_var("DAYS_BACK", "30")) }}' DAY`**
 - Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ env_var("DAYS_BACK", var("days_back", "30")) }}' DAY`
 
+### Ans
+- Command line arguments over ENV_VARS: we specify var("days_back", xxx)
+- ENV_VARs over DEFAULT value: we need to have env_var("DAYS_BACK", 30). (30 as the default value)
+
+Therefore, we need to take this action:
+```
+Update the WHERE clause to `pickup_datetime >= CURRENT_DATE - INTERVAL '{{ var("days_back", env_var("DAYS_BACK", "30")) }}' DAY`
+```
 
 ### Question 3: dbt Data Lineage and Execution
 
@@ -85,7 +104,10 @@ Select the option that does **NOT** apply for materializing `fct_taxi_monthly_zo
 - `dbt run --select +models/core/dim_taxi_trips.sql+ --target prod`
 - `dbt run --select +models/core/fct_taxi_monthly_zone_revenue.sql`
 - `dbt run --select +models/core/`
-- `dbt run --select models/staging/+`
+- **`dbt run --select models/staging/+`**
+
+### Ans
+`fct_taxi_monthly_zone_revenue` is not in the staging folder. Therefore, `dbt run --select models/staging/+` will not materialize `fct_taxi_monthly_zone_revenue`.
 
 
 ### Question 4: dbt Macros and Jinja
@@ -119,12 +141,15 @@ And use on your staging, dim_ and fact_ models as:
 ```
 
 That all being said, regarding macro above, **select all statements that are true to the models using it**:
-- Setting a value for  `DBT_BIGQUERY_TARGET_DATASET` env var is mandatory, or it'll fail to compile
+- **Setting a value for  `DBT_BIGQUERY_TARGET_DATASET` env var is mandatory, or it'll fail to compile**
 - Setting a value for `DBT_BIGQUERY_STAGING_DATASET` env var is mandatory, or it'll fail to compile
-- When using `core`, it materializes in the dataset defined in `DBT_BIGQUERY_TARGET_DATASET`
-- When using `stg`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`
-- When using `staging`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`
+- **When using `core`, it materializes in the dataset defined in `DBT_BIGQUERY_TARGET_DATASET`**
+- **When using `stg`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DA**TASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`**
+- **When using `staging`, it materializes in the dataset defined in `DBT_BIGQUERY_STAGING_DATASET`, or defaults to `DBT_BIGQUERY_TARGET_DATASET`**
+### Ans
+`DBT_BIGQUERY_TARGET_DATASET` has to be set, otherwise dbt will fail if it is accessed or falls back to it. Thus, 1 needs to be selected.
 
+When using **core**, the env_var will be set to `DBT_BIGQUERY_TARGET_DATASET`.  For any other value, it will try to get `DBT_BIGQUERY_STAGING_DATASET`, and if it's not set, it will fall back to `DBT_BIGQUERY_TARGET_DATASET`. Thus, 3,4 and 5 are true.
 
 ## Serious SQL
 

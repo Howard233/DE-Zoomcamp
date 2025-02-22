@@ -179,8 +179,8 @@ Considering the YoY Growth in 2020, which were the yearly quarters with the best
 
 ### Ans
 Query gives me the following results:
- - Green worst  best 2020-Q1, 2020-Q2
- - Yellow worst best 2020 Q1, 2020-Q2
+ - Green best 2020-Q1, worst 2020-Q2
+ - Yellow best 2020 Q1, worst 2020-Q2
 
 ### Question 6: P97/P95/P90 Taxi Monthly Fare
 
